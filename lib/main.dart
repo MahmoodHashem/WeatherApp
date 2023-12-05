@@ -1,20 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:weather/screens/loading_screen.dart';
 
-void main() {
-  runApp( const MaterialApp(home: MyApp()));
-}
-
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:Center(
-        child: ElevatedButton(onPressed: (){}, child: Text("data"))
-      ),
+    return MaterialApp(
+      theme: ThemeData.dark(),
+      home: LoadingScreen(),
     );
   }
 }
-
