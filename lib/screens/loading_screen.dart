@@ -1,60 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:weather/services/location.dart';
-import 'dart:convert';
+import 'package:weather/services/networking.dart';
+
 
 const apiKey = 'ca259fb18289fab0c445e9d3c26228ec';
 
 class LoadingScreen extends StatefulWidget {
+  const LoadingScreen({super.key});
+
   @override
-  _LoadingScreenState createState() => _LoadingScreenState();
+  LoadingScreenState createState() => LoadingScreenState();
 }
-class _LoadingScreenState extends State<LoadingScreen> {
+class LoadingScreenState extends State<LoadingScreen> {
 
   double? latitude;
   double? longitude;
 
-  void getLocation() async {
+  void getLocationData() async {
     Location location =  Location();
     await location.getCurrentLocation();
     latitude = location.latitude;
     longitude = location.longitude;
-  }
+    NetworkHelper networkHelper =
+    NetworkHelper('https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey');
 
-  void getData()  async {
+    var weatherData = await networkHelper.getData();
 
-    getLocation();
-
-    http.Response response = await
-    http.get(Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey'));
-
-    if(response.statusCode == 200){
-      var data = response.body;
-      var condition = jsonDecode(data)['main']['temp'];
-      var city = jsonDecode(data)['name'];
-      var id = jsonDecode(data)['weather'][0]['id'];
-    }else{
-      print(response.statusCode);
-    }
   }
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getLocation();
+    getLocationData();
   }
   @override
   Widget build(BuildContext context) {
-    getData();
     return Scaffold(
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-          getData();
             //Get the current location
           },
-          child: Text('Get Location'),
+          child: const Text('Get Location'),
         ),
       ),
     );
